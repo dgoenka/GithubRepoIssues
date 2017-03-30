@@ -15,8 +15,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.divyanshgoenka.omdbsearch.R;
+import com.google.android.agera.Updatable;
 
-public class SearchActivity extends AppCompatActivity {
+
+public class SearchActivity extends AppCompatActivity implements Updatable {
 
     public static final String ARG_SEARCH_TERM = "search_term";
 
@@ -83,11 +85,34 @@ public class SearchActivity extends AppCompatActivity {
         String searchTerm = searchField.getText().toString();
         if (!TextUtils.isEmpty(searchTerm)) {
             hideKeyboard();
+            setLoadingMode();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    private void setLoadingMode() {
+
     }
 
     public void hideKeyboard() {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(searchField.getWindowToken(), 0);
+    }
+
+
+    @Override
+    public void update() {
+
     }
 }

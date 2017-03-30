@@ -21,7 +21,6 @@
         android:layout_height="50dp"
         android:layout_below="@id/search_field"
         android:layout_centerHorizontal="true"
-        android:onClick="searchClick"
         android:src="@android:drawable/ic_menu_search" />
 
     <ProgressBar
