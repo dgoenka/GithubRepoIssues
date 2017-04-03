@@ -1,4 +1,4 @@
-package com.divyanshgoenka.omdbsearch.provider;
+package com.divyanshgoenka.omdbsearch.presenter;
 
 
 import android.support.annotation.NonNull;
@@ -21,7 +21,10 @@ import java.util.Map;
 
 public class ResultObservable implements MutableRepository<JsonObject> {
 
+    //Since I want to consolidate all requests and response, I'm using singleton pattern
     private static ResultObservable instance;
+
+    //For purpose of demo, I'm using a simple, in-memory caches
     private final HashMap<String, JsonObject> resultMap = new HashMap<>();
     private final HashMap<String, List<ResultUpdateable>> updateables = new HashMap<>();
 

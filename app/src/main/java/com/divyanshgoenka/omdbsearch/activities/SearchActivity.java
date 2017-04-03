@@ -16,8 +16,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.divyanshgoenka.omdbsearch.R;
-import com.divyanshgoenka.omdbsearch.provider.ResultObservable;
-import com.divyanshgoenka.omdbsearch.provider.ResultUpdateable;
+import com.divyanshgoenka.omdbsearch.presenter.ResultObservable;
+import com.divyanshgoenka.omdbsearch.presenter.ResultUpdateable;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -148,7 +148,9 @@ public class SearchActivity extends AppCompatActivity implements ResultUpdateabl
                     }
                 }
             }
-            new AlertDialog.Builder(this).setMessage("" + resultStr).show();
+
+        } else {
+            new AlertDialog.Builder(this).setMessage(R.string.no_result).show();
         }
     }
 }

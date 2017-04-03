@@ -1,4 +1,4 @@
-package com.divyanshgoenka.omdbsearch.provider;
+package com.divyanshgoenka.omdbsearch.presenter;
 
 import com.google.android.agera.Updatable;
 import com.google.gson.JsonObject;
