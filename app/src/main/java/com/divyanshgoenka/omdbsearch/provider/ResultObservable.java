@@ -5,30 +5,31 @@ import android.support.annotation.NonNull;
 
 import com.google.android.agera.MutableRepository;
 import com.google.android.agera.Updatable;
-
-import org.json.JSONObject;
+import com.google.gson.JsonObject;
+import com.koushikdutta.async.future.FutureCallback;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 
 /**
  * Created by divyanshgoenka on 25/03/17.
  */
 
-public class ResultObservable implements MutableRepository<JSONObject> {
+public class ResultObservable implements MutableRepository<JsonObject> {
 
     private static ResultObservable instance;
-    private static HashMap<String, JSONObject> jsonsMap;
-    private HashMap<String, JSONObject> resultMap = new HashMap<>();
-    private List<Updatable> updateables = new ArrayList<>();
+    private final HashMap<String, JsonObject> resultMap = new HashMap<>();
+    private final HashMap<String, List<ResultUpdateable>> updateables = new HashMap<>();
 
     private ResultObservable() {
     }
 
     public static synchronized ResultObservable getInstance() {
-        if (instance != null)
+        if (instance == null)
             instance = new ResultObservable();
 
         return instance;
@@ -36,32 +37,57 @@ public class ResultObservable implements MutableRepository<JSONObject> {
 
     @Override
     public void addUpdatable(@NonNull Updatable updatable) {
-        updateables.add(updatable);
     }
 
     @Override
     public void removeUpdatable(@NonNull Updatable updatable) {
-        updateables.remove(updatable);
+        Iterator it = updateables.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, List<ResultUpdateable>> pair = (Map.Entry) it.next();
+            List<ResultUpdateable> resultUpdateables = pair.getValue();
+            if (resultUpdateables != null)
+                resultUpdateables.remove(updatable);
+            it.remove(); // avoids a ConcurrentModificationException
+        }
     }
+
 
     @NonNull
     @Override
-    public JSONObject get() {
+    public JsonObject get() {
         return null;
     }
 
-    public JSONObject get(String arg) {
-        JSONObject result = resultMap.get(arg.toLowerCase());
+    public JsonObject get(final String arg, ResultUpdateable updatable) {
+        JsonObject result = resultMap.get(arg.toLowerCase());
         if (result == null) {
-            OMDbFetcher.get(arg, new OMDbFetcher.Callback() {
-
+            List<ResultUpdateable> resultUpdateables = updateables.get(arg);
+            if (resultUpdateables == null) {
+                resultUpdateables = new ArrayList<>();
+                updateables.put(arg, resultUpdateables);
+            }
+            resultUpdateables.add(updatable);
+            OMDbFetcher.get(arg, new FutureCallback<JsonObject>() {
+                @Override
+                public void onCompleted(Exception e, JsonObject result) {
+                    accept(arg, result);
+                }
             });
         }
         return result;
     }
 
+    private void accept(String arg, JsonObject result) {
+        resultMap.put(arg, result);
+        List<ResultUpdateable> listToNotify = updateables.get(arg);
+        if (listToNotify != null) {
+            for (ResultUpdateable updateable : listToNotify)
+                updateable.update(result);
+        }
+    }
+
     @Override
-    public void accept(@NonNull JSONObject value) {
+    public void accept(@NonNull JsonObject value) {
 
     }
 }

@@ -2,6 +2,7 @@ package com.divyanshgoenka.omdbsearch.activities;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -15,10 +16,17 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.divyanshgoenka.omdbsearch.R;
-import com.google.android.agera.Updatable;
+import com.divyanshgoenka.omdbsearch.provider.ResultObservable;
+import com.divyanshgoenka.omdbsearch.provider.ResultUpdateable;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 
-public class SearchActivity extends AppCompatActivity implements Updatable {
+public class SearchActivity extends AppCompatActivity implements ResultUpdateable {
 
     public static final String ARG_SEARCH_TERM = "search_term";
 
@@ -63,7 +71,7 @@ public class SearchActivity extends AppCompatActivity implements Updatable {
 
             @Override
             public void afterTextChanged(Editable s) {
-                goButton.setEnabled(TextUtils.isEmpty(s));
+                goButton.setEnabled(!TextUtils.isEmpty(s));
             }
         });
 
@@ -86,6 +94,9 @@ public class SearchActivity extends AppCompatActivity implements Updatable {
         if (!TextUtils.isEmpty(searchTerm)) {
             hideKeyboard();
             setLoadingMode();
+            JsonObject result = ResultObservable.getInstance().get(searchTerm, this);
+            if (result != null)
+                update(result);
         }
     }
 
@@ -99,6 +110,7 @@ public class SearchActivity extends AppCompatActivity implements Updatable {
     @Override
     protected void onPause() {
         super.onPause();
+        ResultObservable.getInstance().removeUpdatable(this);
     }
 
     private void setLoadingMode() {
@@ -114,5 +126,29 @@ public class SearchActivity extends AppCompatActivity implements Updatable {
     @Override
     public void update() {
 
+    }
+
+    @Override
+    public void update(JsonObject result) {
+        if (result != null && result.get("Response").getAsString().equalsIgnoreCase("true")) {
+            Set<Map.Entry<String, JsonElement>> entrySet = result.entrySet();
+            Iterator<Map.Entry<String, JsonElement>> iterator = entrySet.iterator();
+            StringBuffer resultStr = new StringBuffer();
+            while (iterator.hasNext()) {
+                Map.Entry<String, JsonElement> entry = iterator.next();
+                switch (entry.getKey()) {
+                    case ("response"): {
+                        break;
+                    }
+                    case ("poster"): {
+                        break;
+                    }
+                    default: {
+                        resultStr.append(entry.getKey() + " : " + entry.getValue().getAsString() + "\n");
+                    }
+                }
+            }
+            new AlertDialog.Builder(this).setMessage("" + resultStr).show();
+        }
     }
 }

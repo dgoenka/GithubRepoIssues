@@ -9,9 +9,16 @@ import android.app.Application;
  */
 
 public class OMDbApplication extends Application {
+    private static OMDbApplication instance;
+
+    public static OMDbApplication getInstance() {
+        return instance;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
+        instance = this;
     }
 
 }
