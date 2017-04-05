@@ -2,4 +2,6 @@
     <string name="app_name">OMDb Search</string>
     <string name="enter_value">Search for a movie title</string>
     <string name="no_result">No Results</string>
+    <string name="title_activity_detail">Search Result</string>
+    <string name="no_connection">No Connection</string>
 </resources>

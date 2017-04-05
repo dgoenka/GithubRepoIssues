@@ -1,6 +1,7 @@
 package com.divyanshgoenka.omdbsearch.activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -18,12 +19,8 @@ import android.widget.TextView;
 import com.divyanshgoenka.omdbsearch.R;
 import com.divyanshgoenka.omdbsearch.presenter.ResultObservable;
 import com.divyanshgoenka.omdbsearch.presenter.ResultUpdateable;
-import com.google.gson.JsonElement;
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
 
 
 public class SearchActivity extends AppCompatActivity implements ResultUpdateable {
@@ -131,26 +128,13 @@ public class SearchActivity extends AppCompatActivity implements ResultUpdateabl
     @Override
     public void update(JsonObject result) {
         if (result != null && result.get("Response").getAsString().equalsIgnoreCase("true")) {
-            Set<Map.Entry<String, JsonElement>> entrySet = result.entrySet();
-            Iterator<Map.Entry<String, JsonElement>> iterator = entrySet.iterator();
-            StringBuffer resultStr = new StringBuffer();
-            while (iterator.hasNext()) {
-                Map.Entry<String, JsonElement> entry = iterator.next();
-                switch (entry.getKey()) {
-                    case ("response"): {
-                        break;
-                    }
-                    case ("poster"): {
-                        break;
-                    }
-                    default: {
-                        resultStr.append(entry.getKey() + " : " + entry.getValue().getAsString() + "\n");
-                    }
-                }
-            }
-
-        } else {
+            Intent intent = new Intent(this, DetailActivity.class);
+            intent.putExtra(DetailActivity.RESULT_JSON, new Gson().toJson(result));
+            startActivity(intent);
+        } else if (result != null && result.get("Response").getAsString().equalsIgnoreCase("false")) {
             new AlertDialog.Builder(this).setMessage(R.string.no_result).show();
+        } else {
+            new AlertDialog.Builder(this).setMessage(R.string.no_connection).show();
         }
     }
 }
