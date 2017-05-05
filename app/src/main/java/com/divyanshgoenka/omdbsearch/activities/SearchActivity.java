@@ -1,5 +1,6 @@
 package com.divyanshgoenka.omdbsearch.activities;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -31,6 +32,7 @@ public class SearchActivity extends AppCompatActivity implements ResultUpdateabl
     ProgressBar progressBar;
 
     String currentSearchTerm;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,11 +109,20 @@ public class SearchActivity extends AppCompatActivity implements ResultUpdateabl
     @Override
     protected void onPause() {
         super.onPause();
+        dismissAndUnregister();
+    }
+
+    public void dismissAndUnregister() {
         ResultObservable.getInstance().removeUpdatable(this);
+        if (progressDialog != null)
+            progressDialog.dismiss();
     }
 
     private void setLoadingMode() {
-
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage(getString(R.string.searching));
+        progressDialog.setCancelable(false);
+        progressDialog.show();
     }
 
     public void hideKeyboard() {
@@ -136,5 +147,6 @@ public class SearchActivity extends AppCompatActivity implements ResultUpdateabl
         } else {
             new AlertDialog.Builder(this).setMessage(R.string.no_connection).show();
         }
+        dismissAndUnregister();
     }
 }
