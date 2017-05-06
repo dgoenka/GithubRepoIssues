@@ -26,7 +26,8 @@ public class DetailRecyclerAdapter extends RecyclerView.Adapter<Detail.ViewHolde
     public Detail.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (layoutInflater == null)
             layoutInflater = LayoutInflater.from(parent.getContext());
-        return new Detail.ViewHolder(layoutInflater.inflate(R.layout.detail_item, parent, false));
+        Detail.ViewHolder viewHolder = new Detail.ViewHolder(layoutInflater.inflate(R.layout.detail_item, parent, false));
+        return viewHolder;
     }
 
     @Override

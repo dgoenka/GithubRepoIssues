@@ -36,6 +36,7 @@ public class Detail {
             super(itemView);
             fieldNameTT = (TextView) itemView.findViewById(R.id.field_name);
             fieldValueTT = (TextView) itemView.findViewById(R.id.field_value);
+
         }
 
         @Override
