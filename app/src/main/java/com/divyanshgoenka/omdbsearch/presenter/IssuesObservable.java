@@ -1,7 +1,8 @@
 package com.divyanshgoenka.omdbsearch.presenter;
 
 
-import java.util.ArrayList;
+import com.divyanshgoenka.omdbsearch.model.Issue;
+
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -17,10 +18,10 @@ import io.reactivex.disposables.Disposable;
 
 public class IssuesObservable {
 
-    public static Observable<List<String>> paginatedThings(final Observable<Void> onNextObservable) {
-        return Observable.create(new ObservableOnSubscribe<List<String>>() {
+    public static Observable<List<Issue>> paginatedIssues(final Observable<Void> onNextObservable) {
+        return Observable.create(new ObservableOnSubscribe<List<Issue>>() {
             @Override
-            public void subscribe(final ObservableEmitter<List<String>> emitter) throws Exception {
+            public void subscribe(final ObservableEmitter<List<Issue>> emitter) throws Exception {
 
                 onNextObservable.subscribe(new Observer<Void>() {
                     int latestPage = -1;
@@ -43,12 +44,8 @@ public class IssuesObservable {
 
                     @Override
                     public void onNext(Void aVoid) {
-                        latestPage++;
-                        List<String> pageItems = new ArrayList<String>();
-                        for (int i = 0; i < 10; i++) {
-                            pageItems.add("page " + latestPage + " item " + i);
-                        }
-                        emitter.onNext(pageItems);
+
+                        //emitter.onNext(pageItems);
                     }
                 });
             }
