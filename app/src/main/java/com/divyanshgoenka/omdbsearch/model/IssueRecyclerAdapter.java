@@ -26,7 +26,7 @@ public class IssueRecyclerAdapter extends RecyclerView.Adapter<Issue.ViewHolder>
     public Issue.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (layoutInflater == null)
             layoutInflater = LayoutInflater.from(parent.getContext());
-        Issue.ViewHolder viewHolder = new Issue.ViewHolder(layoutInflater.inflate(R.layout.detail_item, parent, false));
+        Issue.ViewHolder viewHolder = new Issue.ViewHolder(layoutInflater.inflate(R.layout.issue_item, parent, false));
         return viewHolder;
     }
 

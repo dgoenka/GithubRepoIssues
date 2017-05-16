@@ -18,13 +18,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.divyanshgoenka.omdbsearch.R;
-import com.divyanshgoenka.omdbsearch.presenter.IssuesObservable;
-import com.divyanshgoenka.omdbsearch.presenter.ResultUpdateable;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
+import com.divyanshgoenka.omdbsearch.model.Issue;
+import com.divyanshgoenka.omdbsearch.util.Validations;
+
+import java.util.ArrayList;
 
 
-public class SearchActivity extends AppCompatActivity implements ResultUpdateable {
+public class SearchActivity extends AppCompatActivity {
 
     public static final String ARG_SEARCH_TERM = "search_term";
 
@@ -92,9 +92,7 @@ public class SearchActivity extends AppCompatActivity implements ResultUpdateabl
         if (!TextUtils.isEmpty(searchTerm)) {
             hideKeyboard();
             setLoadingMode();
-            JsonObject result = IssuesObservable.getInstance().get(searchTerm, this);
-            if (result != null)
-                update(result);
+
         }
     }
 
@@ -112,7 +110,6 @@ public class SearchActivity extends AppCompatActivity implements ResultUpdateabl
     }
 
     public void dismissAndUnregister() {
-        IssuesObservable.getInstance().removeUpdatable(this);
         if (progressDialog != null)
             progressDialog.dismiss();
     }
@@ -130,21 +127,13 @@ public class SearchActivity extends AppCompatActivity implements ResultUpdateabl
     }
 
 
-    @Override
-    public void update() {
-
-    }
-
-    @Override
-    public void update(JsonObject result) {
-        if (result != null && result.get("Response").getAsString().equalsIgnoreCase("true")) {
+    public void update(ArrayList<Issue> result) {
+        if (!Validations.isEmptyOrNull(result)) {
             Intent intent = new Intent(this, IssuesActivity.class);
-            intent.putExtra(IssuesActivity.RESULT_JSON, new Gson().toJson(result));
+            intent.putExtra(IssuesActivity.RESULT_JSON, result);
             startActivity(intent);
-        } else if (result != null && result.get("Response").getAsString().equalsIgnoreCase("false")) {
-            new AlertDialog.Builder(this).setMessage(R.string.no_result).show();
         } else {
-            new AlertDialog.Builder(this).setMessage(R.string.no_connection).show();
+            new AlertDialog.Builder(this).setMessage(R.string.no_result).show();
         }
         dismissAndUnregister();
     }

@@ -11,11 +11,17 @@ import android.widget.ImageView;
 import com.divyanshgoenka.omdbsearch.R;
 import com.divyanshgoenka.omdbsearch.model.Issue;
 import com.divyanshgoenka.omdbsearch.model.IssueRecyclerAdapter;
+import com.divyanshgoenka.omdbsearch.presenter.IssuesObservable;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
 
 public class IssuesActivity extends AppCompatActivity {
 
@@ -23,6 +29,7 @@ public class IssuesActivity extends AppCompatActivity {
     ImageView poster;
     @BindView(R.id.issue_recycler)
     RecyclerView recyclerView;
+    LinearLayoutManager llm;
     private ArrayList<Issue> issues;
     private Toolbar toolbar;
 
@@ -32,7 +39,7 @@ public class IssuesActivity extends AppCompatActivity {
         setContentView(R.layout.content_detail);
         ButterKnife.bind(this);
 
-        LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(llm);
         issues.clear();
 
@@ -59,6 +66,28 @@ public class IssuesActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        Observable<Void> pageDetector = Observable.create(new ObservableOnSubscribe<Void>() {
+            @Override
+            public void subscribe(final ObservableEmitter<Void> emitter) throws Exception {
+                recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+                    int pastVisibleItems, visibleItemCount, totalItemCount;
+
+                    @Override
+                    public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                        visibleItemCount = llm.getChildCount();
+                        totalItemCount = llm.getItemCount();
+                        pastVisibleItems = llm.findFirstVisibleItemPosition();
+
+                        if ((visibleItemCount + pastVisibleItems) >= totalItemCount) {
+                            emitter.onNext(null);
+                        }
+                    }
+                });
+            }
+        }).debounce(400, TimeUnit.MILLISECONDS);
+
+        Observable<List<Issue>> listItemObservable = IssuesObservable.paginatedIssues(pageDetector);
 
     }
 
