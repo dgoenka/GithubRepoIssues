@@ -18,7 +18,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.divyanshgoenka.omdbsearch.R;
-import com.divyanshgoenka.omdbsearch.presenter.ResultObservable;
+import com.divyanshgoenka.omdbsearch.presenter.IssuesObservable;
 import com.divyanshgoenka.omdbsearch.presenter.ResultUpdateable;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -92,7 +92,7 @@ public class SearchActivity extends AppCompatActivity implements ResultUpdateabl
         if (!TextUtils.isEmpty(searchTerm)) {
             hideKeyboard();
             setLoadingMode();
-            JsonObject result = ResultObservable.getInstance().get(searchTerm, this);
+            JsonObject result = IssuesObservable.getInstance().get(searchTerm, this);
             if (result != null)
                 update(result);
         }
@@ -112,7 +112,7 @@ public class SearchActivity extends AppCompatActivity implements ResultUpdateabl
     }
 
     public void dismissAndUnregister() {
-        ResultObservable.getInstance().removeUpdatable(this);
+        IssuesObservable.getInstance().removeUpdatable(this);
         if (progressDialog != null)
             progressDialog.dismiss();
     }

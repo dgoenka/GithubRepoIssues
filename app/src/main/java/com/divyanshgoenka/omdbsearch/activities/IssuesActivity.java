@@ -14,10 +14,14 @@ import com.divyanshgoenka.omdbsearch.model.IssueRecyclerAdapter;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class IssuesActivity extends AppCompatActivity {
 
     public static final String RESULT_JSON = "RESULT_JSON";
     ImageView poster;
+    @BindView(R.id.issue_recycler)
     RecyclerView recyclerView;
     private ArrayList<Issue> issues;
     private Toolbar toolbar;
@@ -26,9 +30,8 @@ public class IssuesActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_detail);
+        ButterKnife.bind(this);
 
-        poster = (ImageView) findViewById(R.id.poster);
-        recyclerView = (RecyclerView) findViewById(R.id.detail_recycler);
         LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(llm);
         issues.clear();
