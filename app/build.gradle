@@ -36,7 +36,7 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.android.support:design:25.2.0'
 
-
+    compile 'io.reactivex.rxjava2:rxjava:2.0.4'
 
     testCompile 'junit:junit:4.12'
 }

@@ -18,7 +18,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.DetailActivity"
+            android:name=".activities.IssuesActivity"
             android:label="@string/title_activity_detail"
             android:parentActivityName=".activities.SearchActivity"
             android:theme="@style/AppTheme.NoActionBar">

@@ -31,7 +31,6 @@ public class SearchActivity extends AppCompatActivity implements ResultUpdateabl
     EditText searchField;
     ProgressBar progressBar;
 
-    String currentSearchTerm;
     private ProgressDialog progressDialog;
 
     @Override
@@ -139,8 +138,8 @@ public class SearchActivity extends AppCompatActivity implements ResultUpdateabl
     @Override
     public void update(JsonObject result) {
         if (result != null && result.get("Response").getAsString().equalsIgnoreCase("true")) {
-            Intent intent = new Intent(this, DetailActivity.class);
-            intent.putExtra(DetailActivity.RESULT_JSON, new Gson().toJson(result));
+            Intent intent = new Intent(this, IssuesActivity.class);
+            intent.putExtra(IssuesActivity.RESULT_JSON, new Gson().toJson(result));
             startActivity(intent);
         } else if (result != null && result.get("Response").getAsString().equalsIgnoreCase("false")) {
             new AlertDialog.Builder(this).setMessage(R.string.no_result).show();
