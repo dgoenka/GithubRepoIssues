@@ -8,10 +8,10 @@ import android.app.Application;
  * Created by divyanshgoenka on 25/03/17.
  */
 
-public class OMDbApplication extends Application {
-    private static OMDbApplication instance;
+public class GithubRepoIssuesApplication extends Application {
+    private static GithubRepoIssuesApplication instance;
 
-    public static OMDbApplication getInstance() {
+    public static GithubRepoIssuesApplication getInstance() {
         return instance;
     }
 

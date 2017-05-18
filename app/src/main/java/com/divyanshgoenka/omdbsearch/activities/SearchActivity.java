@@ -19,9 +19,13 @@ import android.widget.TextView;
 
 import com.divyanshgoenka.omdbsearch.R;
 import com.divyanshgoenka.omdbsearch.model.Issue;
+import com.divyanshgoenka.omdbsearch.presenter.IssuesObservable;
 import com.divyanshgoenka.omdbsearch.util.Validations;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import io.reactivex.disposables.CompositeDisposable;
 
 
 public class SearchActivity extends AppCompatActivity {
@@ -30,7 +34,7 @@ public class SearchActivity extends AppCompatActivity {
 
     EditText searchField;
     ProgressBar progressBar;
-
+    CompositeDisposable mCompositeDisposable;
     private ProgressDialog progressDialog;
 
     @Override
@@ -88,13 +92,18 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     public void searchClick() {
-        String searchTerm = searchField.getText().toString();
+        final String searchTerm = searchField.getText().toString();
         if (!TextUtils.isEmpty(searchTerm)) {
             hideKeyboard();
             setLoadingMode();
-
+            mCompositeDisposable = IssuesObservable.loadJSON(searchTerm, 1, this::update, this::handleError);
         }
     }
+
+    private void handleError(Throwable throwable) {
+        new AlertDialog.Builder(this).setMessage(R.string.no_result).show();
+    }
+
 
     @Override
     protected void onResume() {
@@ -112,6 +121,8 @@ public class SearchActivity extends AppCompatActivity {
     public void dismissAndUnregister() {
         if (progressDialog != null)
             progressDialog.dismiss();
+        if (mCompositeDisposable != null)
+            mCompositeDisposable.clear();
     }
 
     private void setLoadingMode() {
@@ -127,14 +138,13 @@ public class SearchActivity extends AppCompatActivity {
     }
 
 
-    public void update(ArrayList<Issue> result) {
+    public void update(List<Issue> result) {
         if (!Validations.isEmptyOrNull(result)) {
             Intent intent = new Intent(this, IssuesActivity.class);
-            intent.putExtra(IssuesActivity.RESULT_JSON, result);
+            intent.putExtra(IssuesActivity.RESULT_JSON, (ArrayList<Issue>) result);
             startActivity(intent);
-        } else {
-            new AlertDialog.Builder(this).setMessage(R.string.no_result).show();
         }
         dismissAndUnregister();
     }
+
 }

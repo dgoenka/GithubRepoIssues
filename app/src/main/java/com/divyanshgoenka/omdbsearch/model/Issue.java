@@ -1,9 +1,19 @@
 package com.divyanshgoenka.omdbsearch.model;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.divyanshgoenka.omdbsearch.R;
+import com.divyanshgoenka.omdbsearch.util.StringUtil;
+import com.squareup.picasso.Picasso;
 
 import java.io.Serializable;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by divyanshgoenka on 16/05/17.
@@ -230,20 +240,34 @@ public class Issue implements Serializable {
         this.comments = comments;
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder implements AdapterBinder {
+    public static class ViewHolder extends RecyclerView.ViewHolder implements AdapterBinder<Issue> {
+
+        @BindView(R.id.avatar)
+        ImageView avatar;
+
+        @BindView(R.id.field_name)
+        TextView field_name;
+
+        @BindView(R.id.field_value)
+        TextView field_value;
 
         public ViewHolder(View itemView) {
             super(itemView);
+            ButterKnife.bind(itemView);
         }
 
         @Override
-        public void onBind(Object arg) {
-
+        public void onBind(Issue arg) {
+            Context context = itemView.getContext();
+            Picasso.with(context).load(arg.getUser().getAvatar_url()).into(avatar);
+            field_name.setText(arg.getTitle());
+            field_value.setText(StringUtil.limit(arg.getBody(), 200));
         }
 
         @Override
         public void onUnbind() {
-
+            Context context = itemView.getContext();
+            Picasso.with(context).cancelRequest(avatar);
         }
     }
 }
